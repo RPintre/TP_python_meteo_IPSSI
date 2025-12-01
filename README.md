@@ -1,4 +1,4 @@
-# Analyse Météo Montpellier
+# Description globale du script : Analyse Météo Montpellier
 
 Ce script Python permet de récupérer, analyser et visualiser des données météo historiques pour Montpellier. Il peut aussi générer un rapport complet et afficher des graphiques.
 
@@ -57,9 +57,9 @@ Assurez-vous que ces modules sont installés avant d’exécuter le script.
 - Les dates dans le menu doivent être au format **JJ-MM-AAAA**.  
 - Les graphiques s’ouvrent dans une fenêtre externe (fermer pour revenir au menu).  
 
-## Documentation des fonctions et classes
+# Documentation des fonctions et classes
 
-# Functions
+## Functions
 
 `affichageDonneesMeteoSample(data, n=20)`
 :   Affiche un échantillon des données météorologiques.
@@ -191,7 +191,7 @@ Assurez-vous que ces modules sont installés avant d’exécuter le script.
     Returns:
         float or None: La température minimale, ou None si les données sont vides.
 
-# Classes
+## Classes
 
 `dataMeteo(date, tmin, tmax, precip, humid)`
 :   Classe pour stocker les données météorologiques quotidiennes.
