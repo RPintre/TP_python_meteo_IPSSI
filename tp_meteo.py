@@ -5,6 +5,13 @@ import matplotlib.pyplot as plt
 
 # Fonction pour trouver le chemin complet d'un fichier donné
 def find_file(filename, start_dir="."):
+    """Recherche récursive d'un fichier dans un répertoire donné.
+    Args:
+        filename (str): Le nom du fichier à rechercher.
+        start_dir (str): Le répertoire de départ pour la recherche.
+        Returns:
+        str: Le chemin complet du fichier s'il est trouvé, sinon None.
+    """
     for root, dirs, files in os.walk(start_dir):
         if filename in files:
             return os.path.join(root, filename)
@@ -12,12 +19,18 @@ def find_file(filename, start_dir="."):
 
 # Fonction pour obtenir la date d'aujourd'hui au format YYYY-MM-DD
 def getTodayDate():
+    """Obtient la date d'aujourd'hui au format YYYY-MM-DD.
+    Returns:
+        str: La date d'aujourd'hui au format YYYY-MM-DD.
+    """
     from datetime import date
     today = date.today()
     return today.strftime("%Y-%m-%d")
 
 # Fonction pour télécharger les données météorologiques
 def download_meteorological_data():
+    """Télécharge les données météorologiques historiques pour Montpellier depuis l'API Open-Meteo et les enregistre dans un fichier CSV.
+    """
     today= getTodayDate()
     dateDebut=input("Entrez la date de début (DD-MM-YYYY) defaut(01-01-2025) : ")
     if not dateDebut:
@@ -51,6 +64,16 @@ def download_meteorological_data():
 
 # Classe pour stocker les données météorologiques
 class dataMeteo:
+    """Classe pour stocker les données météorologiques quotidiennes.
+        Attributes:
+            date (str): La date des données météorologiques.
+            temperature_min (float): La température minimale.
+            temperature_max (float): La température maximale.
+            precipitations (float): Les précipitations.
+            humidite (float): L'humidité moyenne.
+        Methods:
+            __init__(self, date, tmin, tmax, precip, humid): Initialise une instance de dataMeteo avec les données fournies.    
+    """
     def __init__(self, date, tmin, tmax, precip, humid):
         self.date = date
         self.temperature_min = float(tmin)
@@ -60,6 +83,10 @@ class dataMeteo:
 
 # Fonction pour récupérer et nettoyer les données météorologiques
 def recupererDonnees():
+    """Récupère et nettoie les données météorologiques depuis le fichier CSV.
+    Returns:
+        list: Une liste d'instances de dataMeteo contenant les données nettoyées.
+    """
     download_meteorological_data()
     reader = None
     with open(find_file("meteo_montpellier.csv"), 'r') as recupCSV:
@@ -74,6 +101,11 @@ def recupererDonnees():
 
 # Fonctions d'analyse des données météorologiques
 def affichageDonneesMeteoSample(data, n=20):
+    """Affiche un échantillon des données météorologiques.
+    Args:
+        data (list): La liste des données météorologiques.
+        n (int): Le nombre d'entrées à afficher (par défaut 20).
+    """
     n_input = input("Combien d'entrées afficher ? (par défaut 20) : ")
     n = int(n_input) if n_input.isdigit() else n
     print(f"Affichage des {n} premières entrées des données météorologiques :")
@@ -83,6 +115,12 @@ def affichageDonneesMeteoSample(data, n=20):
 
 # Calcul de la moyenne des températures
 def moyenneTemperatures(data):
+    """Calcule la température moyenne à partir des données météorologiques.
+    Args:
+        data (list): La liste des données météorologiques.
+    Returns:
+        float: La température moyenne.
+    """
     total_temp = 0
     count = 0
     for meteo in data:
@@ -92,6 +130,12 @@ def moyenneTemperatures(data):
 
 # Calcul de l'humidité moyenne
 def humiditeMoyenne(data):
+    """Calcule l'humidité moyenne à partir des données météorologiques.
+    Args:
+        data (list): La liste des données météorologiques.
+    Returns:
+        float: L'humidité moyenne.
+    """
     total_humidite = 0
     count = 0
     for meteo in data:
@@ -102,6 +146,13 @@ def humiditeMoyenne(data):
 
 # Vérification s'il a plu à une date donnée
 def ilAplu(data, date):
+    """Vérifie s'il a plu à une date donnée.
+    Args:
+        data (list): La liste des données météorologiques.
+        date (str): La date à vérifier au format YYYY-MM-DD.
+    Returns:
+        bool or None: True s'il a plu, False s'il n'a pas plu, None si la date n'est pas trouvée.
+    """
     for meteo in data:
         if meteo.date == date:
             return True if float(meteo.precipitations) >= 0.1 else False
@@ -109,6 +160,12 @@ def ilAplu(data, date):
 
 # Trouver la température minimale
 def temperatureMinimale(data):
+    """Trouve la température minimale à partir des données météorologiques.
+    Args:
+        data (list): La liste des données météorologiques.
+    Returns:
+        float or None: La température minimale, ou None si les données sont vides.
+    """
     min_temp = float('inf')
     for meteo in data:
         temp = float(meteo.temperature_min)
@@ -118,6 +175,12 @@ def temperatureMinimale(data):
 
 # Trouver la température maximale
 def temperatureMaximale(data):
+    """Trouve la température maximale à partir des données météorologiques.
+    Args:
+        data (list): La liste des données météorologiques.
+    Returns:
+        float or None: La température maximale, ou None si les données sont vides.
+    """
     max_temp = float('-inf')
     for meteo in data:
         temp = float(meteo.temperature_max)
@@ -127,6 +190,12 @@ def temperatureMaximale(data):
 
 # Compter le nombre de jours de pluie
 def nombreJoursDePluie(data):
+    """Compte le nombre de jours de pluie à partir des données météorologiques.
+    Args:
+        data (list): La liste des données météorologiques.
+    Returns:
+        int: Le nombre de jours de pluie.
+    """
     count = 0
     for meteo in data:
         if float(meteo.precipitations) > 0:
@@ -135,6 +204,12 @@ def nombreJoursDePluie(data):
 
 # Trouver le jour le plus chaud
 def jourLepluschaud(data):
+    """Trouve le jour le plus chaud à partir des données météorologiques.
+    Args:
+        data (list): La liste des données météorologiques.
+    Returns:
+        tuple: Le jour le plus chaud et la température maximale.
+    """
     max_temp = float('-inf')
     jour = None
     for meteo in data:
@@ -146,6 +221,12 @@ def jourLepluschaud(data):
 
 # Trouver le jour le plus froid
 def jourLeplusfroid(data):
+    """Trouve le jour le plus froid à partir des données météorologiques.
+    Args:
+        data (list): La liste des données météorologiques.
+    Returns:
+        tuple: Le jour le plus froid et la température minimale.
+    """
     min_temp = float('inf')
     jour = None
     for meteo in data:
@@ -157,16 +238,34 @@ def jourLeplusfroid(data):
 
 # Formater une date au format FR
 def formatDateFR(date_str):
+    """Formate une date au format français (JJ/MM/AAAA).
+    Args:
+        date_str (str): La date au format YYYY-MM-DD.
+    Returns:
+        str: La date formatée au format JJ/MM/AAAA.
+    """
     jour, mois, annee = date_str.split('-')[2], date_str.split('-')[1], date_str.split('-')[0]
     return f"{jour}/{mois}/{annee}"
 
 # Formater une date au format EN
 def formatDateEN(date_str):
+    """Formate une date au format anglais (AAAA-MM-JJ).
+    Args:
+        date_str (str): La date au format YYYY-MM-DD.
+    Returns:
+        str: La date formatée au format AAAA-MM-JJ.
+    """
     annee, mois, jour = date_str.split('-')[0], date_str.split('-')[1], date_str.split('-')[2]
     return f"{annee}-{mois}-{jour}"
 
 
 def statistiques(data):   
+    """Calcule diverses statistiques à partir des données météorologiques.
+    Args:
+        data (list): La liste des données météorologiques.
+    Returns:
+        dict: Un dictionnaire contenant les statistiques calculées.
+    """
     dataset = {
         "moyenne_temperature": moyenneTemperatures(data),
         "humidite_moyenne": humiditeMoyenne(data),
@@ -180,6 +279,12 @@ def statistiques(data):
 
 # Générer un rapport complet
 def rapportComplet(data):
+    """Génère un rapport complet à partir des données météorologiques.
+    Args:
+        data (list): La liste des données météorologiques.
+    Returns:
+        str: Le rapport complet sous forme de chaîne de caractères.
+    """
     dico = statistiques(data)
     jour_froid, temp_froide = formatDateFR(dico["jour_plus_froid"][0]), dico["jour_plus_froid"][1]
     jour_chaud, temp_chaude = formatDateFR(dico["jour_plus_chaud"][0]), dico["jour_plus_chaud"][1]
@@ -189,6 +294,10 @@ def rapportComplet(data):
 
 # Fonctions pour afficher des graphiques
 def afficherGraphiqueTemperatures(data):
+    """Affiche un graphique des températures minimales et maximales.
+    Args:
+        data (list): La liste des données météorologiques.
+    """
     dates = [meteo.date for meteo in data]
     temp_min = [float(meteo.temperature_min) for meteo in data]
     temp_max = [float(meteo.temperature_max) for meteo in data]
@@ -206,6 +315,10 @@ def afficherGraphiqueTemperatures(data):
 
 # Fonction pour afficher le graphique des précipitations
 def afficherGraphiquePrecipitations(data):
+    """Affiche un graphique des précipitations.
+    Args:
+        data (list): La liste des données météorologiques.
+    """
     dates = [meteo.date for meteo in data]
     precipitations = [float(meteo.precipitations) for meteo in data]
 
@@ -220,12 +333,17 @@ def afficherGraphiquePrecipitations(data):
 
 # Fonction pour créer un fichier rapport en fichier txt
 def create_report_file(report):
+    """Crée un fichier texte contenant le rapport météorologique.
+    Args:
+        report (str): Le rapport complet sous forme de chaîne de caractères.
+    """
     with open("rapport_meteo.txt", "w", encoding="utf-8") as f:
         f.write(report)
     print("Rapport enregistré dans 'rapport_meteo.txt'")
 
 # Menu interactif pour l'utilisateur
 def menu():
+    """Affiche un menu interactif pour l'utilisateur afin de réaliser des analyses météorologiques."""
     choix = ''
     data = recupererDonnees()
     while choix != '0':
